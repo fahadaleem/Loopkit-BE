@@ -6,6 +6,14 @@ const jwt = require("jsonwebtoken");
 
 const NODE_ENV = process.env.NODE_ENV;
 
+// Cross-site cookies (vercel.app → onrender.com) require SameSite=None + Secure.
+// Locally we keep SameSite=Lax + non-Secure so dev over plain http still works.
+const COOKIE_OPTIONS = {
+    httpOnly: true,
+    secure: NODE_ENV === 'production',
+    sameSite: NODE_ENV === 'production' ? 'none' : 'lax',
+};
+
 /*
     @route POST /api/auth/register
     @desc Register a new user
@@ -30,7 +38,7 @@ const registerUser = async (req, res) => {
     const user = await User.create({ name, email, password: hashPassword });
     const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    res.cookie("token", token, { httpOnly: true, secure: NODE_ENV === 'production', maxAge: 3600000 });
+    res.cookie("token", token, { ...COOKIE_OPTIONS, maxAge: 3600000 });
 
     return res.status(201).json({
         message: "User created successfully", user: {
@@ -66,7 +74,7 @@ const loginUser = async (req, res) => {
 
     const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    res.cookie("token", token, { httpOnly: true, secure: NODE_ENV === 'production', maxAge: 3600000 });
+    res.cookie("token", token, { ...COOKIE_OPTIONS, maxAge: 3600000 });
 
     return res.status(200).json({
         message: "Login successful", user: {
@@ -93,7 +101,7 @@ const logoutUser = async (req, res) => {
     }
 
     const token = await BlackList.create({ userToken });
-    res.clearCookie("token");
+    res.clearCookie("token", COOKIE_OPTIONS);
 
     return res.status(200).json({ message: "Logout successful" });
 }
