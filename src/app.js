@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'https://loopkit.vercel.app',
     credentials: true
 }));
 
