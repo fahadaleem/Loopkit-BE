@@ -1,7 +1,7 @@
 const pdf = require('pdf-parse-new');
 const { generateReportForInterview, generateResumePdf } = require("../services/ai.service");
 const InterviewReportModel = require("../models/interviewReport.model");
-
+const reportQueue = require("../queues/report.queue");
 
 
 /* 
@@ -14,26 +14,23 @@ const InterviewReportModel = require("../models/interviewReport.model");
 const generateReport = async (req, res) => {
     const resumeContent = await pdf(req.file.buffer);
     const { selfDescription, jobDescription } = req.body;
-
-    const report = await generateReportForInterview(resumeContent.text, jobDescription, selfDescription);
-
     const interviewReport = await InterviewReportModel.create({
-        ...report,
-        user: req.user.id,
         resume: resumeContent.text,
         jobDescription: jobDescription,
         selfDescription: selfDescription,
+        user: req.user.id,
+        status: "processing"
+    });
+
+    await reportQueue.add("generate-report", {
+        interviewReportId: interviewReport._id
     });
 
     return res.status(200).json({
-        message: "Report generated successfully",
+        message: "Report is being generated",
         interviewReport: {
             id: interviewReport._id,
-            user: req.user.id,
-            resume: resumeContent.text,
-            jobDescription: jobDescription,
-            selfDescription: selfDescription,
-            ...report,
+            status: interviewReport.status
         }
     });
 

@@ -85,7 +85,7 @@ Candidate self-description:
 ${selfDescription}`;
 
     const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3-flash-preview",
         contents: prompt,
         config: {
             responseMimeType: "application/json",
@@ -96,6 +96,7 @@ ${selfDescription}`;
     const parsed = JSON.parse(response.text);
     return reportSchema.parse(parsed);
 }
+
 
 
 const generateResumePdf = async (resume, jobDescription, selfDescription) => {
@@ -340,7 +341,7 @@ const generateResumePdf = async (resume, jobDescription, selfDescription) => {
             Generate the resume HTML now.`;
 
     const htmlResumeResponse = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3-flash-preview",
         contents: prompt,
         config: {
             responseMimeType: "application/json",

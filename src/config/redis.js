@@ -1,0 +1,10 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+const Redis = require("ioredis");
+
+const redis = new Redis(process.env.REDIS_URL, {
+    maxRetriesPerRequest: null,
+});
+
+
+module.exports = { redis };

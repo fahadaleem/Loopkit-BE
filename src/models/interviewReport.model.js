@@ -3,15 +3,12 @@ const mongoose = require("mongoose");
 const TechnicalQuestionsSchema = new mongoose.Schema({
     question: {
         type: String,
-        required: [true, "Question is required"]
     },
     answer: {
         type: String,
-        required: [true, "Answer is required"]
     },
     intention: {
         type: String,
-        required: [true, "Intention is required"]
     }
 }, {
     _id: false
@@ -21,15 +18,12 @@ const TechnicalQuestionsSchema = new mongoose.Schema({
 const BehavioralQuestionsSchema = new mongoose.Schema({
     question: {
         type: String,
-        required: [true, "Question is required"]
     },
     answer: {
         type: String,
-        required: [true, "Answer is required"]
     },
     intention: {
         type: String,
-        required: [true, "Intention is required"]
     }
 }, {
     _id: false
@@ -38,12 +32,10 @@ const BehavioralQuestionsSchema = new mongoose.Schema({
 const SkillGapSchema = new mongoose.Schema({
     skill: {
         type: String,
-        required: [true, "Skill is required"]
     },
    severity: {
     type: String,
     enum: ["low", "medium", "high"],
-    required: [true, "Severity is required"]
    }
 }, {
     _id: false
@@ -52,15 +44,12 @@ const SkillGapSchema = new mongoose.Schema({
 const preparationPlanSchema = new mongoose.Schema({
     day: {
         type: Number,
-        required: [ true, "Day is required" ]
     },
     focus: {
         type: String,
-        required: [ true, "Focus is required" ]
     },
     tasks: [ {
         type: String,
-        required: [ true, "Task is required" ]
     } ]
 })
 
@@ -72,11 +61,9 @@ const atsResume = new mongoose.Schema({
     }, 
     contentType: {
         type: String,
-        required: [true, "Content type is required"]
     },
     sizeBytes: {
         type: Number,
-        required: [true, "Size in bytes is required"]
     },
     generatedAt:{
         type: Date,
@@ -90,7 +77,6 @@ const atsResume = new mongoose.Schema({
 const InterviewReportSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: [true, "Title is required"]
     },
     jobDescription: {
         type: String,
@@ -118,6 +104,16 @@ const InterviewReportSchema = new mongoose.Schema({
     },
     atsResume: {
         type: atsResume
+    },
+    status: {
+        type: String,
+        enum: ["pending", "processing", "completed", "failed"],
+        default: "pending",
+        required: [true, "Status is required"]
+    },
+    error: {
+        type: String,
+        default: null
     }
 }, {
     timestamps: true
