@@ -10,8 +10,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "start:worker": "node src/workers/report.worker.js",
-    "dev": "concurrently \"nodemon server.js\" \"nodemon src/workers/report.worker.js\"",
-    "dev:worker": "nodemon src/workers/report.worker.js"
+    "dev": "concurrently \"nodemon server.js\" \"nodemon src/workers/report.worker.js\" \"nodemon src/workers/resume.worker.js\"",
+    "dev:worker": "nodemon src/workers/report.worker.js\" \"nodemon src/workers/resume.worker.js\"",
+    "dev:worker:resume": "nodemon src/workers/resume.worker.js",
+    "dev:worker:report": "nodemon src/workers/report.worker.js"
   },
   "dependencies": {
     "@google/genai": "^2.0.0",
@@ -21,6 +23,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "groq-sdk": "^1.2.0",
     "ioredis": "^5.10.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.1",
@@ -29,6 +32,7 @@
     "pdf-parse": "^2.4.5",
     "pdf-parse-new": "^2.1.0",
     "puppeteer": "^24.43.0",
+    "rate-limiter-flexible": "^11.1.0",
     "zod": "^4.4.3",
     "zod-to-json-schema": "^3.25.2"
   },

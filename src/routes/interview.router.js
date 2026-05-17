@@ -2,6 +2,7 @@ const express = require("express");
 const authUser = require("../middlewares/auth.middleware");
 const upload = require("../middlewares/file.middleware");
 const interviewController = require("../controllers/interview.controller");
+const ratelimitMiddleware = require("../middlewares/ratelimit.middleware");
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ const router = express.Router();
     @access Private
 */
 
-router.post("/generate-report", authUser, upload.single("resume"), interviewController.generateReport);
+router.post("/generate-report", authUser, ratelimitMiddleware, upload.single("resume"), interviewController.generateReport);
 
 
 /*

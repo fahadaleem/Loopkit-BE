@@ -33,10 +33,10 @@ const SkillGapSchema = new mongoose.Schema({
     skill: {
         type: String,
     },
-   severity: {
-    type: String,
-    enum: ["low", "medium", "high"],
-   }
+    severity: {
+        type: String,
+        enum: ["low", "medium", "high"],
+    }
 }, {
     _id: false
 })
@@ -48,31 +48,58 @@ const preparationPlanSchema = new mongoose.Schema({
     focus: {
         type: String,
     },
-    tasks: [ {
+    tasks: [{
         type: String,
-    } ]
+    }]
 })
 
 
 const atsResume = new mongoose.Schema({
     data: {
-        type: Buffer, 
+        type: Buffer,
         select: false
-    }, 
+    },
     contentType: {
         type: String,
     },
     sizeBytes: {
         type: Number,
     },
-    generatedAt:{
+    generatedAt: {
         type: Date,
         default: Date.now
     },
+    status: {
+        type: String,
+        enum: ["pending", "processing", "completed", "failed"],
+        default: "pending",
+        required: [true, "Status is required"]
+    },
+    error: {
+        type: String,
+        default: null
+    }
 }, {
     _id: false
 })
 
+
+const metadataSchema = new mongoose.Schema({
+    model: {
+        type: String,
+    },
+    inputTokens: {
+        type: Number,
+    },
+    outputTokens: {
+        type: Number,
+    },
+    totalTokens: {
+        type: Number,
+    }
+}, {
+    _id: false
+})
 
 const InterviewReportSchema = new mongoose.Schema({
     title: {
@@ -93,10 +120,10 @@ const InterviewReportSchema = new mongoose.Schema({
         min: 0,
         max: 100
     },
-    technicalQuestions: [ TechnicalQuestionsSchema ],
-    behavioralQuestions: [ BehavioralQuestionsSchema ],
-    skillGaps: [ SkillGapSchema ],
-    preparationPlan: [ preparationPlanSchema ],
+    technicalQuestions: [TechnicalQuestionsSchema],
+    behavioralQuestions: [BehavioralQuestionsSchema],
+    skillGaps: [SkillGapSchema],
+    preparationPlan: [preparationPlanSchema],
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -113,6 +140,10 @@ const InterviewReportSchema = new mongoose.Schema({
     },
     error: {
         type: String,
+        default: null
+    },
+    metadata: {
+        type: metadataSchema,
         default: null
     }
 }, {

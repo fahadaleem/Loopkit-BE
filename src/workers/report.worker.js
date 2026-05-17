@@ -4,7 +4,7 @@ const { Worker, UnrecoverableError } = require("bullmq");
 const { redis } = require("../config/redis");
 const InterviewReportModel = require("../models/interviewReport.model");
 const connectDB = require("../config/database");
-const { generateReportForInterview } = require("../services/ai.service");
+const { generateInterviewReport } = require("../services/ai.service");
 
 connectDB();
 
@@ -17,7 +17,7 @@ const reportWorker = new Worker("report-queue", async (job) => {
         throw new UnrecoverableError("Interview report not found");
     }
 
-    const report = await generateReportForInterview(
+    const reportResponse = await generateInterviewReport(
         interviewReport.resume,
         interviewReport.jobDescription,
         interviewReport.selfDescription,
@@ -25,7 +25,7 @@ const reportWorker = new Worker("report-queue", async (job) => {
 
     const updated = await InterviewReportModel.findByIdAndUpdate(
         interviewReportId,
-        { ...report, status: "completed", error: null },
+        { ...reportResponse.report, metadata: reportResponse.metadata, status: "completed", error: null },
         { returnDocument: "after" },
     );
 

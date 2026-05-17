@@ -1,8 +1,8 @@
 const pdf = require('pdf-parse-new');
-const { generateReportForInterview, generateResumePdf } = require("../services/ai.service");
+const { generateResumePdf } = require("../services/ai.service");
 const InterviewReportModel = require("../models/interviewReport.model");
 const reportQueue = require("../queues/report.queue");
-
+const resumeQueue = require("../queues/resume.queue");
 
 /* 
 
@@ -138,25 +138,15 @@ const getResumePdf = async (req, res) => {
         return res.send(report.atsResume.data);
     }
 
-    // Cold path — generate, persist on the report, then return.
-    const pdfBuffer = await generateResumePdf(
-        report.resume,
-        report.jobDescription,
-        report.selfDescription,
-    );
-    report.atsResume = {
-        data: pdfBuffer,
-        contentType: 'application/pdf',
-        sizeBytes: pdfBuffer.length,
-        generatedAt: new Date(),
-    };
-    await report.save();
-
-    res.set({
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename="ats-resume.pdf"',
+    await resumeQueue.add("generate-resume", {
+        reportId: reportId
     });
-    return res.send(pdfBuffer);
+    return res.status(200).json({
+        message: "Resume is being generated",
+        reportId: reportId,
+        status: "processing"
+    });
+
 }
 
 
