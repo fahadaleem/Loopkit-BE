@@ -67,7 +67,7 @@ const getReportById = async (req, res) => {
 
 const getAllReports = async (req, res) => {
     // pagination and limit
-    const { page = 1, limit = 10, fields = "title,createdAt,matchScore" } = req.query;
+    const { page = 1, limit = 10, fields = "title,createdAt,matchScore,status" } = req.query;
     const fieldsArray = fields.split(",");
     const reports = await InterviewReportModel.find({ user: req.user.id }).select(fieldsArray).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit).lean();
     const totalReports = await InterviewReportModel.countDocuments({ user: req.user.id });
